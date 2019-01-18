@@ -60,14 +60,8 @@
         (usage-exit)
         (let* ((sbprogfile (car arglist))
                (program (readlist-from-inputfile sbprogfile)))
-              (write-program-by-line sbprogfile program) (label-pass program))))
-			 
-(define (label-pass line)
-	(printf "~a:" (car line))
-	(if (not (null? (cdr line)))
-		(label-pass (cdr line))))
+              (write-program-by-line sbprogfile program))))
 
-			  
 (printf "terminal-port? *stdin* = ~s~n" (terminal-port? *stdin*))
 (if (terminal-port? *stdin*)
     (main (vector->list (current-command-line-arguments)))
