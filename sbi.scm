@@ -61,9 +61,22 @@
         (let* ((sbprogfile (car arglist))
                (program (readlist-from-inputfile sbprogfile)))
               (write-program-by-line sbprogfile program) (label-pass program))))
-			 
+		
+
+(define *symbol-table* (make-hash))
+(define (symbol-get key)
+        (hash-ref *symbol-table* key))
+(define (symbol-put! key value)
+        (hash-set! *symbol-table* key value))
+		
+(define *label-table* (make-hash))
+(define (label-get key)
+        (hash-ref *label-table* key))
+(define (label-put! key value)
+        (hash-set! *label-table* key value))
+		
 (define (label-pass line)
-	(printf ":~a ~n" (car line))
+	(printf ":~a ~n" (car(car line)))
 	(if (not (null? (cdr line)))
 		(label-pass (cdr line))
 		(values)))
