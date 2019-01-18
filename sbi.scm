@@ -75,14 +75,18 @@
 (define (label-put! key value)
         (hash-set! *label-table* key value))
 		
-(define (label-pass line)
-	(if(not(null? (cdr(car line)))) 
-		(printf "yes :~a ~n" (cadr (car line)))
-		(printf "no:~a ~n" (car (car line))))
-		
-	(if (not (null? (cdr line)))
-		(label-pass (cdr line))
-		(values)))
+(define (label-pass program)
+	(let ((line (car program)))
+		(if(and (not(null? (cdr line))) (symbol? (cadr line)))   
+			(hash-set! *label-table* (cadr line) )
+			(printf "~a: ~n" (car line))
+		)
+	)
+	(if (not (null? (cdr program)))
+		(label-pass (cdr program))
+		(values)
+	)
+)
 
 			  
 (printf "terminal-port? *stdin* = ~s~n" (terminal-port? *stdin*))
