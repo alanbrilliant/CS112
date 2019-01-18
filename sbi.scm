@@ -63,9 +63,10 @@
               (write-program-by-line sbprogfile program) (label-pass program))))
 			 
 (define (label-pass line)
-	(printf "~a:" (car line))
+	(printf ":~a ~n" (car line))
 	(if (not (null? (cdr line)))
-		(label-pass (cdr line))))
+		(label-pass (cdr line))
+		(values)))
 
 			  
 (printf "terminal-port? *stdin* = ~s~n" (terminal-port? *stdin*))
