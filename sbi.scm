@@ -1,6 +1,5 @@
-#!lang Racket
-;;#!/afs/cats.ucsc.edu/courses/cmps112-wm/usr/racket/bin/mzscheme -qr
-;; $Id: sbi.scm,v 1.10 2019-01-15 14:10:54-08 - - 
+#!/afs/cats.ucsc.edu/courses/cmps112-wm/usr/racket/bin/mzscheme -qr
+;; $Id: sbi.scm,v 1.10 2019-01-15 14:10:54-08 - - $
 ;;
 ;; NAME
 ;;    sbi.scm - silly basic interpreter
@@ -56,19 +55,14 @@
     (for-each (lambda (line) (printf "~s~n" line)) program)
     (printf ")~n"))
 
-(define (label-pass line)
-	(printf "~a:" (car line))
-	(if (not (null? (cdr line)))
-		(label-pass (cdr line))
-	
 (define (main arglist)
     (if (or (null? arglist) (not (null? (cdr arglist))))
         (usage-exit)
         (let* ((sbprogfile (car arglist))
                (program (readlist-from-inputfile sbprogfile)))
-              (write-program-by-line sbprogfile program)
-			  (label-pass program)))
-  
+              (write-program-by-line sbprogfile program))))
+
+(printf "terminal-port? *stdin* = ~s~n" (terminal-port? *stdin*))
 (if (terminal-port? *stdin*)
     (main (vector->list (current-command-line-arguments)))
     (printf "sbi.scm: interactive mode~n"))
