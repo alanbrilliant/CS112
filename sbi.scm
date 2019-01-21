@@ -60,25 +60,25 @@
         (usage-exit)
         (let* ((sbprogfile (car arglist))
                (program (readlist-from-inputfile sbprogfile)))
-              (write-program-by-line sbprogfile program) (label-pass program))))
+              (write-program-by-line sbprogfile program) (label-pass program) (interpret-program program))))
 		
 
 (define *symbol-table* (make-hash))
-(define (symbol-get key)
-        (hash-ref *symbol-table* key))
-(define (symbol-put! key value)
-        (hash-set! *symbol-table* key value))
+;(define (symbol-get key)
+;        (hash-ref *symbol-table* key))
+;(define (symbol-put! key value)
+;        (hash-set! *symbol-table* key value))
 		
 (define *label-table* (make-hash))
-(define (label-get key)
-        (hash-ref *label-table* key))
-(define (label-put! key value)
-        (hash-set! *label-table* key value))
+;(define (label-get key)
+;        (hash-ref *label-table* key))
+;(define (label-put! key value)
+;        (hash-set! *label-table* key value))
 		
 (define (label-pass program)
 	(let ((line (car program)))
 		(if(and (not(null? (cdr line))) (symbol? (cadr line)))   
-			(hash-set! *label-table* (cadr line) )
+			(hash-set! *label-table* (cadr line) line )
 			(printf "~a: ~n" (car line))
 		)
 	)
@@ -87,6 +87,45 @@
 		(values)
 	)
 )
+
+(define (interpret-program program)
+
+	(define (interpret-next-line)
+		(if (not (null? (cdr program)))
+			(interpret-program (cdr program))
+			(values)
+		)
+	)
+	
+	(define (interpret-statement statement)
+		(let* ((statement (cond 
+							[(equal? (car statement) "goto") ("goto~n")]
+							[(equal? (car statement) "dim") ("dim~n")]
+							[(equal? (car statement) "input") ("input~n")]
+							[(equal? (car statement) "let") ( "let~n")]
+							[(equal? (car statement) "if") ( "if~n")]
+							[(equal? (car statement) "print") ( "print~n")]
+							[else (printf "not a recognized symbol")]
+							)))
+			(printf "~a: ~n" statement)
+			(interpret-next-line)
+		)
+				;;(statement-return (statement)))
+			;(if (null? (statement-return))
+			;	(interpret-next-line)
+			;	(interpret-program statement-return)
+			;)
+		;)
+	)
+	(let ((line (car program)))
+		(cond 
+			[(and (not(null? (cdr line))) (pair? (cadr line))) (interpret-statement (cadr line))]
+			[(and (not(null? (cddr line))) (pair? (caddr line))) (interpret-statement (caddr line))]
+			[else (interpret-next-line)]
+		)
+	)
+)
+
 
 			  
 (printf "terminal-port? *stdin* = ~s~n" (terminal-port? *stdin*))
