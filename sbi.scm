@@ -101,7 +101,10 @@
 	)
 	
 	(define (interpret-statement statement)
-		(let ((statement-return (cond 
+		(let ((statement-return 			
+			
+
+							(cond 
 							[(equal? (car statement) 'goto) (interpret-goto (cadr statement))]
 							[(equal? (car statement) 'dim) "dim~n"]
 							[(equal? (car statement) 'input) "input~n"]
@@ -109,10 +112,9 @@
 							[(equal? (car statement) 'if) "if~n"]
 							[(equal? (car statement) 'print) (interpret-print (cdr statement))]
 							[else "not a recognized symbol"]
-							))
-			
-				)
-			(if (null? (statement-return))
+							)
+		))
+			(if (null? statement-return)
 				(interpret-next-line)
 				(interpret-program statement-return)
 			)
@@ -129,12 +131,13 @@
 
 
 (define (interpret-print arg)
-	(if (string? (car arg))
-		(printf "~a~n" (car arg))
-		(printf "~a~n" (evalexpr (car arg)))
+	(cond 
+		[(null?   arg) '()]
+		[(string? (car arg)) (printf "~a" (car arg))]
+		[else (printf "~a" (evalexpr (car arg)))]
 	)
-	(if (null? (cdr arg))
-		'()
+	(if(or (null? arg) (null? (cdr arg)))
+		(begin (printf" ~n") '())		
 		(interpret-print (cdr arg))
 	)
 )
