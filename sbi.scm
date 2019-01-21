@@ -74,6 +74,7 @@
 ;        (hash-ref *label-table* key))
 ;(define (label-put! key value)
 ;        (hash-set! *label-table* key value))
+(define *functio-table* (make-hash))
 		
 (define (label-pass program)
 	(let ((line (car program)))
@@ -98,24 +99,22 @@
 	)
 	
 	(define (interpret-statement statement)
-		(let* ((fn (cond 
+		(let* ((statement-return (cond 
 							[(equal? (car statement) 'goto) "goto~n"]
 							[(equal? (car statement) 'dim) "dim~n"]
 							[(equal? (car statement) 'input) "input~n"]
 							[(equal? (car statement) 'let) "let~n"]
 							[(equal? (car statement) 'if) "if~n"]
-							[(equal? (car statement) 'print) "print~n"]
+							[(equal? (car statement) 'print) (interpret-print (cdr statement))]
 							[else "not a recognized symbol"]
-							)))
-			(printf "~a; ~n" fn)
-			(interpret-next-line)
+							))
+			
+				)
+			(if (null? (statement-return))
+				(interpret-next-line)
+				(interpret-program statement-return)
+			)
 		)
-				;;(statement-return (statement)))
-			;(if (null? (statement-return))
-			;	(interpret-next-line)
-			;	(interpret-program statement-return)
-			;)
-		;)
 	)
 	(let ((line (car program)))
 		(cond 
@@ -125,6 +124,23 @@
 		)
 	)
 )
+
+
+(define (interpret-print arg)
+	(if (string? arg)
+		(printf "~a~n" arg)
+		(printf "~a~n" (evalexpr arg))
+	)
+)
+
+(define (evalexpr expr)
+    (cond ((number? expr) (+ 0.0 expr))
+          (else (let ((fn (hash-ref *function-table* (car expr)))
+                      (args (map evalexpr (cdr expr))))
+                     (apply fn args)))))
+
+
+
 
 
 			  
