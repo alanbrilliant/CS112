@@ -106,7 +106,7 @@
 							[(equal? (car statement) 'input) "input~n"]
 							[(equal? (car statement) 'let) "let~n"]
 							[(equal? (car statement) 'if) "if~n"]
-							[(equal? (car statement) 'print) (interpret-print (cadr statement))]
+							[(equal? (car statement) 'print) (interpret-print (cdr statement))]
 							[else "not a recognized symbol"]
 							))
 			
@@ -128,11 +128,14 @@
 
 
 (define (interpret-print arg)
-	(if (string? arg)
+	(if (string? (car arg))
 		(printf "~a~n" arg)
 		(printf "~a~n" (evalexpr arg))
 	)
-	'()
+	(if (null? (cdr arg))
+		'()
+		(interpret-print (cdr arg))
+	)
 )
 
 (define (interpret-goto arg)
