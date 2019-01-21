@@ -74,7 +74,8 @@
 ;        (hash-ref *label-table* key))
 ;(define (label-put! key value)
 ;        (hash-set! *label-table* key value))
-(define *functio-table* (make-hash))
+(define *function-table* (make-hash))
+(define *variable-table* (make-hash))
 		
 (define (label-pass program)
 	(let ((line (car program)))
@@ -99,13 +100,13 @@
 	)
 	
 	(define (interpret-statement statement)
-		(let* ((statement-return (cond 
-							[(equal? (car statement) 'goto) "goto~n"]
+		(let ((statement-return (cond 
+							[(equal? (car statement) 'goto) (interpret-goto (cadr statement))]
 							[(equal? (car statement) 'dim) "dim~n"]
 							[(equal? (car statement) 'input) "input~n"]
 							[(equal? (car statement) 'let) "let~n"]
 							[(equal? (car statement) 'if) "if~n"]
-							[(equal? (car statement) 'print) (interpret-print (cdr statement))]
+							[(equal? (car statement) 'print) (interpret-print (cadr statement))]
 							[else "not a recognized symbol"]
 							))
 			
@@ -131,6 +132,11 @@
 		(printf "~a~n" arg)
 		(printf "~a~n" (evalexpr arg))
 	)
+	'()
+)
+
+(define (interpret-goto arg)
+	(hash-ref *label-table* arg)
 )
 
 (define (evalexpr expr)
@@ -148,4 +154,60 @@
 (if (terminal-port? *stdin*)
     (main (vector->list (current-command-line-arguments)))
     (printf "sbi.scm: interactive mode~n"))
+	
+(for-each
+    (lambda (pair)
+            (hash-set! *function-table* (car pair) (cadr pair)))
+    `(
+
+        
+        (div     ,(lambda (x y) (floor (/ x y))))
+        (log10   ,(lambda (x) (/ (log x) (log 10.0))))
+        (mod     ,(lambda (x y) (- x (* (div x y) y))))
+        (quot    ,(lambda (x y) (truncate (/ x y))))
+        (rem     ,(lambda (x y) (- x (* (quot x y) y))))
+        (+       ,+)
+        (^       ,expt)
+        (ceil    ,ceiling)
+        (exp     ,exp)
+        (floor   ,floor)
+        (log     ,log)
+        (sqrt    ,sqrt)
+		(+ ,+)
+		(- ,-)
+		(* ,*)
+		(/ ,/)
+		(abs    ,abs)
+		(acos   ,acos)
+		(asin   ,asin)
+		(atan   ,atan)
+		(cos    ,cos)
+		(log    ,log)
+		(round  ,round)
+		(sin    ,sin)
+		(sqrt   ,sqrt)
+		(tan    ,tan)
+		(trunc  ,trunc)
+		(<>     ,(lambda (x y) (not (eqv? x y))))
+		(=      ,eqv?)
+		(>      ,>)
+		(<      ,<)
+		(>=		,>=)
+		(<=		,<=)
+
+     ))
+	 
+(for-each
+    (lambda (pair)
+            (hash-set! *variable-table* (car pair) (cadr pair)))
+	(
+		(log10_2 0.301029995663981195213738894724493026768189881)
+        (sqrt_2  1.414213562373095048801688724209698078569671875)
+        (e       2.718281828459045235360287471352662497757247093)
+        (pi      3.141592653589793238462643383279502884197169399)
+		(eof     0.0)
+		(nan     ,(/ 0.0 0.0))
+		
+	))
+		
 
