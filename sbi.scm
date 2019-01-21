@@ -81,7 +81,8 @@
 	(let ((line (car program)))
 		(if(and (not(null? (cdr line))) (symbol? (cadr line)))   
 			(hash-set! *label-table* (cadr line) line )
-			(printf "~a: ~n" (car line))
+			; (printf "~a: ~n" (car line))
+			'()
 		)
 	)
 	(if (not (null? (cdr program)))
@@ -129,8 +130,8 @@
 
 (define (interpret-print arg)
 	(if (string? (car arg))
-		(printf "~a~n" arg)
-		(printf "~a~n" (evalexpr arg))
+		(printf "~a~n" (car arg))
+		(printf "~a~n" (evalexpr (car arg)))
 	)
 	(if (null? (cdr arg))
 		'()
@@ -153,11 +154,7 @@
 
 
 			  
-(printf "terminal-port? *stdin* = ~s~n" (terminal-port? *stdin*))
-(if (terminal-port? *stdin*)
-    (main (vector->list (current-command-line-arguments)))
-    (printf "sbi.scm: interactive mode~n"))
-	
+
 (for-each
     (lambda (pair)
             (hash-set! *function-table* (car pair) (cadr pair)))
@@ -176,7 +173,6 @@
         (floor   ,floor)
         (log     ,log)
         (sqrt    ,sqrt)
-		(+ ,+)
 		(- ,-)
 		(* ,*)
 		(/ ,/)
@@ -190,7 +186,7 @@
 		(sin    ,sin)
 		(sqrt   ,sqrt)
 		(tan    ,tan)
-		(trunc  ,trunc)
+		;(trunc  ,trunc)
 		(<>     ,(lambda (x y) (not (eqv? x y))))
 		(=      ,eqv?)
 		(>      ,>)
@@ -200,17 +196,21 @@
 
      ))
 	 
-(for-each
-    (lambda (pair)
-            (hash-set! *variable-table* (car pair) (cadr pair)))
-	(
-		(log10_2 0.301029995663981195213738894724493026768189881)
-        (sqrt_2  1.414213562373095048801688724209698078569671875)
-        (e       2.718281828459045235360287471352662497757247093)
-        (pi      3.141592653589793238462643383279502884197169399)
-		(eof     0.0)
-		(nan     ,(/ 0.0 0.0))
+;(for-each
+    ;(lambda (pair)
+         ;   (hash-set! *variable-table* (car pair) (cadr pair)))
+	;(
+		;(log10_2 0.301029995663981195213738894724493026768189881)
+        ;(sqrt_2  1.414213562373095048801688724209698078569671875)
+        ;(e       2.718281828459045235360287471352662497757247093)
+        ;(pi      3.141592653589793238462643383279502884197169399)
+	;	(eof     0.0)
+		;(nan     ,(/ 0.0 0.0))
 		
-	))
+;	))
 		
-
+(printf "terminal-port? *stdin* = ~s~n" (terminal-port? *stdin*))
+(if (terminal-port? *stdin*)
+    (main (vector->list (current-command-line-arguments)))
+    (printf "sbi.scm: interactive mode~n"))
+	
