@@ -109,7 +109,7 @@
 							(cond 
 							[(equal? (car statement) 'goto) (interpret-goto (cadr statement))]
 							[(equal? (car statement) 'dim) (interpret-dim (cdr statement))]
-							[(equal? (car statement) 'input) "input~n"]
+							[(equal? (car statement) 'input) (interpret-input (cdr statement))]
 							[(equal? (car statement) 'let) (interpret-let (cdr  statement))]
 							[(equal? (car statement) 'if) (interpret-if (cdr statement))]
 							[(equal? (car statement) 'print) (interpret-print (cdr statement))]
@@ -141,8 +141,8 @@
 			[(list? var) (set-array var)]
 		)
 		(if (null? (cdr args))
-			(interpret-input (cdr args))
 			'()
+			(interpret-input (cdr args))
 		)
 	)
 )
@@ -155,8 +155,6 @@
 		)
 	)
 		
-
-
 )
 
 (define (interpret-dim arg) 
@@ -204,6 +202,7 @@
 )
 
 (define (evalexpr expr*)
+	(printf "~a::~n" expr*)
 	(let ((expr (cond 
 					[(symbol? expr*) (hash-ref *variable-table* expr*)]
 					[(and (list? expr*) (eqv? (car expr*) 'asub)) (evalexpr (vector-ref (hash-ref *array-table* (cadr expr*)) (exact-round (evalexpr(caddr expr*)))))]  
