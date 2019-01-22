@@ -218,14 +218,15 @@
         
         (div     ,(lambda (x y) (floor (/ x y))))
         (log10   ,(lambda (x) (/ (log x) (log 10.0))))
+		(log10   ,(lambda (x) (/ (log x) (log 2.0))))
         (mod     ,(lambda (x y) (- x (* (div x y) y))))
         (quot    ,(lambda (x y) (truncate (/ x y))))
         (rem     ,(lambda (x y) (- x (* (quot x y) y))))
         (+       ,+)
-        (^       ,expt)
+        (^       ,expt)  
         (ceil    ,ceiling)
         (exp     ,exp)
-        (floor   ,floor)
+        (floor   ,floor) 
         (log     ,log)
         (sqrt    ,sqrt)
 		(- ,-)
@@ -251,19 +252,19 @@
 
      ))
 	 
-;(for-each
-    ;(lambda (pair)
-         ;   (hash-set! *variable-table* (car pair) (cadr pair)))
-	;(
+(for-each
+    (lambda (pair)
+            (hash-set! *variable-table* (car pair) (cadr pair)))
+	`(
 		;(log10_2 0.301029995663981195213738894724493026768189881)
         ;(sqrt_2  1.414213562373095048801688724209698078569671875)
-        ;(e       2.718281828459045235360287471352662497757247093)
-        ;(pi      3.141592653589793238462643383279502884197169399)
-	;	(eof     0.0)
+        (e       ,(exp 1.0))
+        (pi      ,(acos -1.0))
+		(eof     0.0)
 		;(nan     ,(/ 0.0 0.0))
 		
-;	))
-		
+	))
+	
 (printf "terminal-port? *stdin* = ~s~n" (terminal-port? *stdin*))
 (if (terminal-port? *stdin*)
     (main (vector->list (current-command-line-arguments)))
