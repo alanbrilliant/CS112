@@ -134,6 +134,11 @@
 )
 
 
+(define (interpret-input args) 
+	(printf "~a" (read *stdin*))
+	'()
+)
+
 (define (interpret-if arg) 
 	(let*((if-list (car arg))(relop (car if-list)) (expr1 (cadr if-list)) (expr2 (caddr if-list)))
 		(if ((hash-ref *function-table* relop) (evalexpr expr1) (evalexpr expr2))
