@@ -135,10 +135,18 @@
 
 
 (define (interpret-input args) 
-	(let ((input  (printf "~a" (read *stdin*))) (var (car args)))
-		(cond 
-			[(symbol? var) (hash-set! *variable-table* var input)]
-			[(list? var) (set-array var)]
+	(let ((rawInput (read *stdin*)) (var (car args)))
+		(let ((input (cond 
+							[(not(number? rawInput)) (hash-ref *variable-table* nan)]
+							[(eof-object? rawInput) (begin (hash-set! *variable-table* eof 1) (hash-ref *variable-table* nan))]
+							[else rawInput]
+					)
+				))
+							
+			(cond 
+				[(symbol? var) (hash-set! *variable-table* var input)]
+				[(list? var) (set-array var)]
+			)
 		)
 		(if (null? (cdr args))
 			'()
@@ -275,7 +283,7 @@
         (e       ,(exp 1.0))
         (pi      ,(acos -1.0))
 		(eof     0.0)
-		;(nan     ,(/ 0.0 0.0))
+		(nan     ,(/ 0.0 0.0))
 		
 	))
 	
