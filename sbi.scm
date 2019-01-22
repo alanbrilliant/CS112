@@ -137,17 +137,21 @@
 (define (interpret-input args) 
 	(let ((rawInput (read *stdin*)) (var (car args)))
 		(let ((input (cond 
-							[(not(number? rawInput)) (hash-ref *variable-table* nan)]
-							[(eof-object? rawInput) (begin (hash-set! *variable-table* eof 1) (hash-ref *variable-table* nan))]
+							
+							[(eof-object? rawInput) (begin (hash-set! *variable-table* 'eof 1) (hash-ref *variable-table* 'nan))]
+							[(not(number? rawInput)) (hash-ref *variable-table* 'nan)]
 							[else rawInput]
 					)
 				))
-							
+			
+				
 			(cond 
 				[(symbol? var) (hash-set! *variable-table* var input)]
 				[(list? var) (set-array var)]
 			)
+			
 		)
+		
 		(if (null? (cdr args))
 			'()
 			(interpret-input (cdr args))
@@ -210,7 +214,6 @@
 )
 
 (define (evalexpr expr*)
-	(printf "~a::~n" expr*)
 	(let ((expr (cond 
 					[(symbol? expr*) (hash-ref *variable-table* expr*)]
 					[(and (list? expr*) (eqv? (car expr*) 'asub)) (evalexpr (vector-ref (hash-ref *array-table* (cadr expr*)) (exact-round (evalexpr(caddr expr*)))))]  
@@ -265,7 +268,7 @@
 		(sqrt   ,sqrt)
 		(tan    ,tan)
 		(trunc  ,truncate)
-		(<>     ,(lambda (x y) (not (eqv? x y))))
+		(<>     ,(lambda (x y) (not (= x y))))
 		(=      ,eqv?)
 		(>      ,>)
 		(<      ,<)
