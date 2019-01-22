@@ -94,7 +94,7 @@
 )
 
 (define (interpret-program program)
-
+	;(printf "~a~n" (car program))
 	(define (interpret-next-line)
 		(if (not (null? (cdr program)))
 			(interpret-program (cdr program))
@@ -147,7 +147,7 @@
 				
 			(cond 
 				[(symbol? var) (hash-set! *variable-table* var input)]
-				[(list? var) (set-array var)]
+				[(list? var) (set-array var input)]
 			)
 			
 		)
@@ -228,7 +228,7 @@
 
 
 (define (set-array asub arg) 
-	(vector-set! (hash-ref *array-table* (cadr asub)) (exact-round (evalexpr (caddr asub))) (evalexpr(cadr arg)))
+	(vector-set! (hash-ref *array-table* (cadr asub)) (exact-round (evalexpr (caddr asub))) (evalexpr arg))
 )
 			  
 

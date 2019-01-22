@@ -1,0 +1,4 @@
+terminal-port? *stdin* = #f
+sbi.scm: interactive mode
+terminal-port? *stdin* = #f
+sbi.scm: interactive mode
