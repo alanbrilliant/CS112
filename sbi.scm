@@ -108,7 +108,7 @@
 							[(equal? (car statement) 'goto) (interpret-goto (cadr statement))]
 							[(equal? (car statement) 'dim) "dim~n"]
 							[(equal? (car statement) 'input) "input~n"]
-							[(equal? (car statement) 'let) "let~n"]
+							[(equal? (car statement) 'let) interpret-let (cdr statement)]
 							[(equal? (car statement) 'if) "if~n"]
 							[(equal? (car statement) 'print) (interpret-print (cdr statement))]
 							[else "not a recognized symbol"]
@@ -129,6 +129,12 @@
 	)
 )
 
+(define (interpret-let arg)
+	(let ((expr (evalxpr (cadr arg))))
+		(hash-set! *variable-table* (car arg) expr)
+	)
+
+)
 
 (define (interpret-print arg)
 	(cond 
@@ -146,11 +152,18 @@
 	(hash-ref *label-table* arg)
 )
 
-(define (evalexpr expr)
-    (cond ((number? expr) (+ 0.0 expr))
-          (else (let ((fn (hash-ref *function-table* (car expr)))
-                      (args (map evalexpr (cdr expr))))
-                     (apply fn args)))))
+(define (evalexpr expr*)
+	(let ((expr (if (symbol? expr*)
+					(hash-ref *variable-table* expr*)
+					expr*
+				)
+			))
+		(cond ((number? expr) (+ 0.0 expr))
+			  (else (let ((fn (hash-ref *function-table* (car expr)))
+						  (args (map evalexpr (cdr expr))))
+						 (apply fn args))))
+	)
+)
 
 
 
