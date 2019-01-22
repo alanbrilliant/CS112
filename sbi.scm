@@ -173,7 +173,7 @@
 	(let ((asub (car arg)))
 		(if (eqv? (car asub) 'asub)
 			(begin	
-				[let( (NewArr (make-vector (evalexpr (caddr asub)) 0)))
+				[let( (NewArr (make-vector (exact-round (evalexpr (caddr asub))) 0)))
 					(hash-set! *array-table* (cadr asub) NewArr)
 				]
 			)
@@ -184,13 +184,10 @@
 )
 
 (define (interpret-let arg)
-	(let ((asub (car arg)))
+	(let ((asub (car arg))(expr (evalexpr (cadr arg))))
 		(cond 
-			[(and (list?  asub) (eqv? (car asub) 'asub)) (set-array asub)]
-			[else 
-				(let ((expr (evalexpr (cadr arg))))
-					(hash-set! *variable-table* (car arg) expr)
-				)]
+			[(and (list?  asub) (eqv? (car asub) 'asub)) (set-array asub expr)]
+			[else (hash-set! *variable-table* (car arg) expr)]
 		)
 	)
 	'()
@@ -230,7 +227,7 @@
 
 
 
-(define (set-array asub) 
+(define (set-array asub arg) 
 	(vector-set! (hash-ref *array-table* (cadr asub)) (exact-round (evalexpr (caddr asub))) (evalexpr(cadr arg)))
 )
 			  
