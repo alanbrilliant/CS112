@@ -111,7 +111,7 @@
 							[(equal? (car statement) 'dim) (interpret-dim (cdr statement))]
 							[(equal? (car statement) 'input) "input~n"]
 							[(equal? (car statement) 'let) (interpret-let (cdr  statement))]
-							[(equal? (car statement) 'if) "if~n"]
+							[(equal? (car statement) 'if) (interpret-if (cdr statement))]
 							[(equal? (car statement) 'print) (interpret-print (cdr statement))]
 							[else "not a recognized symbol"]
 							)
@@ -130,9 +130,21 @@
 			[(and (not(null? (cdr line))) (not(null? (cddr line))) (pair? (caddr line))) (interpret-statement (caddr line))]
 			[else (interpret-next-line)]
 		)
-	)
+	) 
 )
 
+
+(define (interpret-if arg) 
+	(let*((if-list (car arg))(relop (car if-list)) (expr1 (cadr if-list)) (expr2 (caddr if-list)))
+		(if ((hash-ref *function-table* relop) (evalexpr expr1) (evalexpr expr2))
+			(interpret-goto (cadr arg))
+			'()
+		)
+	)
+		
+
+
+)
 
 (define (interpret-dim arg) 
 	(let ((asub (car arg)))
@@ -158,8 +170,6 @@
 				)]
 		)
 	)
-	
-	
 	'()
 
 )
@@ -167,11 +177,7 @@
 (define (interpret-print arg)
 	(cond 
 		[(null?   arg) '()]
-		[(string? (car arg)) (printf "~a" (car arg))]
-		[(and (list? (car arg)) (eqv? 'asub (caar arg))) (let ((asub (car arg)))
-																	(printf "~a" (evalexpr (vector-ref (hash-ref *array-table* (cadr asub)) (exact-round (evalexpr(caddr asub))))))
-																)
-		]   
+		[(string? (car arg)) (printf "~a" (car arg))]  
 		[else (printf "~a" (evalexpr (car arg)))]
 	)
 	(if(or (null? arg) (null? (cdr arg)))
@@ -185,9 +191,10 @@
 )
 
 (define (evalexpr expr*)
-	(let ((expr (if (symbol? expr*)
-					(hash-ref *variable-table* expr*)
-					expr*
+	(let ((expr (cond 
+					[(symbol? expr*) (hash-ref *variable-table* expr*)]
+					[(and (list? expr*) (eqv? (car expr*) 'asub)) (evalexpr (vector-ref (hash-ref *array-table* (cadr expr*)) (exact-round (evalexpr(caddr expr*)))))]  
+					[else expr*]
 				)
 			))
 		(cond ((number? expr) (+ 0.0 expr))
@@ -234,7 +241,7 @@
 		(sin    ,sin)
 		(sqrt   ,sqrt)
 		(tan    ,tan)
-		;(trunc  ,trunc)
+		(trunc  ,truncate)
 		(<>     ,(lambda (x y) (not (eqv? x y))))
 		(=      ,eqv?)
 		(>      ,>)
