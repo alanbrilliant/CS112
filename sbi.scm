@@ -138,19 +138,20 @@
 	(let ((asub (car arg)))
 		(if (eqv? (car asub) 'asub)
 			(begin	
-				[let( (NewArr (vector-set (caddr asub) 0)))
-					(hash-set! *array-table* (cadr asub) (NewArr))
+				[let( (NewArr (make-vector (caddr asub) 0)))
+					(hash-set! *array-table* (cadr asub) NewArr)
 				]
 			)
 			'()
 		)
 	)
+	'()
 )
 
 (define (interpret-let arg)
 	(let ((asub (car arg)))
 		(cond 
-			[(and(not (null? (car asub)))(eqv? (car asub) 'asub)) (vector-set! (hash-ref *array-table* (cadr asub)) (caddr asub) (evalexpr(cadr arg))]
+			[(and (list?  asub) (eqv? (car asub) 'asub)) (vector-set! (hash-ref *array-table* (cadr asub)) (exact-round (evalexpr (caddr asub))) (evalexpr(cadr arg)))]
 			[else 
 				(let ((expr (evalexpr (cadr arg))))
 					(hash-set! *variable-table* (car arg) expr)
@@ -167,8 +168,8 @@
 	(cond 
 		[(null?   arg) '()]
 		[(string? (car arg)) (printf "~a" (car arg))]
-		[(and (not (null? (caar arg))) (eqv? 'asub (car arg))) (let ((asub (car arg)))
-																	(evalexpr (vector-ref (hash-ref *array-table* (cadr asub)) (caddr asub)))
+		[(and (list? (car arg)) (eqv? 'asub (caar arg))) (let ((asub (car arg)))
+																	(printf "~a" (evalexpr (vector-ref (hash-ref *array-table* (cadr asub)) (exact-round (evalexpr(caddr asub))))))
 																)
 		]   
 		[else (printf "~a" (evalexpr (car arg)))]
