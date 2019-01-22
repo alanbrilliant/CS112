@@ -80,7 +80,7 @@
 (define (label-pass program)
 	(let ((line (car program)))
 		(if(and (not(null? (cdr line))) (symbol? (cadr line)))   
-			(hash-set! *label-table* (cadr line) line )
+			(hash-set! *label-table* (cadr line) program )
 			; (printf "~a: ~n" (car line))
 			'()
 		)
@@ -108,12 +108,13 @@
 							[(equal? (car statement) 'goto) (interpret-goto (cadr statement))]
 							[(equal? (car statement) 'dim) "dim~n"]
 							[(equal? (car statement) 'input) "input~n"]
-							[(equal? (car statement) 'let) interpret-let (cdr statement)]
+							[(equal? (car statement) 'let) (interpret-let (cdr  statement))]
 							[(equal? (car statement) 'if) "if~n"]
 							[(equal? (car statement) 'print) (interpret-print (cdr statement))]
 							[else "not a recognized symbol"]
 							)
 		))
+			
 			(if (null? statement-return)
 				(interpret-next-line)
 				(interpret-program statement-return)
@@ -121,6 +122,7 @@
 		)
 	)
 	(let ((line (car program)))
+		
 		(cond 
 			[(and (not(null? (cdr line))) (pair? (cadr line))) (interpret-statement (cadr line))]
 			[(and (not(null? (cdr line))) (not(null? (cddr line))) (pair? (caddr line))) (interpret-statement (caddr line))]
@@ -130,9 +132,10 @@
 )
 
 (define (interpret-let arg)
-	(let ((expr (evalxpr (cadr arg))))
+	(let ((expr (evalexpr (cadr arg))))
 		(hash-set! *variable-table* (car arg) expr)
 	)
+	'()
 
 )
 
