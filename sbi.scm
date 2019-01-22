@@ -173,7 +173,7 @@
 	(let ((asub (car arg)))
 		(if (eqv? (car asub) 'asub)
 			(begin	
-				[let( (NewArr (make-vector (caddr asub) 0)))
+				[let( (NewArr (make-vector (evalexpr (caddr asub)) 0)))
 					(hash-set! *array-table* (cadr asub) NewArr)
 				]
 			)
@@ -201,7 +201,7 @@
 	(cond 
 		[(null?   arg) '()]
 		[(string? (car arg)) (printf "~a" (car arg))]  
-		[else (printf "~a" (evalexpr (car arg)))]
+		[else (printf " ~a" (evalexpr (car arg)))]
 	)
 	(if(or (null? arg) (null? (cdr arg)))
 		(begin (printf" ~n") '())		
