@@ -135,8 +135,16 @@
 
 
 (define (interpret-input args) 
-	(printf "~a" (read *stdin*))
-	'()
+	(let ((input  (printf "~a" (read *stdin*))) (var (car args)))
+		(cond 
+			[(symbol? var) (hash-set! *variable-table* var input)]
+			[(list? var) (set-array var)]
+		)
+		(if (null? (cdr args))
+			(interpret-input (cdr args))
+			'()
+		)
+	)
 )
 
 (define (interpret-if arg) 
@@ -168,7 +176,7 @@
 (define (interpret-let arg)
 	(let ((asub (car arg)))
 		(cond 
-			[(and (list?  asub) (eqv? (car asub) 'asub)) (vector-set! (hash-ref *array-table* (cadr asub)) (exact-round (evalexpr (caddr asub))) (evalexpr(cadr arg)))]
+			[(and (list?  asub) (eqv? (car asub) 'asub)) (set-array asub)]
 			[else 
 				(let ((expr (evalexpr (cadr arg))))
 					(hash-set! *variable-table* (car arg) expr)
@@ -212,7 +220,9 @@
 
 
 
-
+(define (set-array asub) 
+	(vector-set! (hash-ref *array-table* (cadr asub)) (exact-round (evalexpr (caddr asub))) (evalexpr(cadr arg)))
+)
 			  
 
 (for-each
