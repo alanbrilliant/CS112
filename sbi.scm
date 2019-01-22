@@ -76,6 +76,8 @@
 ;        (hash-set! *label-table* key value))
 (define *function-table* (make-hash))
 (define *variable-table* (make-hash))
+(define *array-table* (make-hash))
+
 		
 (define (label-pass program)
 	(let ((line (car program)))
@@ -96,7 +98,7 @@
 	(define (interpret-next-line)
 		(if (not (null? (cdr program)))
 			(interpret-program (cdr program))
-			(values)
+			'()
 		)
 	)
 	
@@ -106,7 +108,7 @@
 
 							(cond 
 							[(equal? (car statement) 'goto) (interpret-goto (cadr statement))]
-							[(equal? (car statement) 'dim) "dim~n"]
+							[(equal? (car statement) 'dim) (interpret-dim (cdr statement))]
 							[(equal? (car statement) 'input) "input~n"]
 							[(equal? (car statement) 'let) (interpret-let (cdr  statement))]
 							[(equal? (car statement) 'if) "if~n"]
@@ -131,6 +133,18 @@
 	)
 )
 
+
+(define (interpret-dim arg) 
+	(if (eqv? (car arg) 'asub)
+		(begin	
+			[let( (NewArr (vector-set (caddr arg) 0)))
+				(hash-set! *array-table* (cadr arg) (NewArr))
+			]
+		)
+		'()
+	)
+)
+
 (define (interpret-let arg)
 	(let ((expr (evalexpr (cadr arg))))
 		(hash-set! *variable-table* (car arg) expr)
@@ -143,6 +157,7 @@
 	(cond 
 		[(null?   arg) '()]
 		[(string? (car arg)) (printf "~a" (car arg))]
+		[(eqv? 'asub (car arg)) (evalexpr (vector-ref (hash-ref *array-table* (cadr arg)) (caddr arg)))]   
 		[else (printf "~a" (evalexpr (car arg)))]
 	)
 	(if(or (null? arg) (null? (cdr arg)))
