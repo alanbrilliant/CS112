@@ -109,12 +109,18 @@
             
 
              (cond 
-              [(equal? (car statement) 'goto) (interpret-goto (cadr statement))]
-              [(equal? (car statement) 'dim) (interpret-dim (cdr statement))]
-              [(equal? (car statement) 'input) (interpret-input (cdr statement))]
-              [(equal? (car statement) 'let) (interpret-let (cdr  statement))]
-              [(equal? (car statement) 'if) (interpret-if (cdr statement))]
-              [(equal? (car statement) 'print) (interpret-print (cdr statement))]
+              [(equal? (car statement) 'goto) 
+                  (interpret-goto (cadr statement))]
+              [(equal? (car statement) 'dim) 
+                  (interpret-dim (cdr statement))]
+              [(equal? (car statement) 'input) 
+                  (interpret-input (cdr statement))]
+              [(equal? (car statement) 'let) 
+                  (interpret-let (cdr  statement))]
+              [(equal? (car statement) 'if) 
+                  (interpret-if (cdr statement))]
+              [(equal? (car statement) 'print) 
+                  (interpret-print (cdr statement))]
               [else "not a recognized symbol"]
                             )
         ))
@@ -129,9 +135,12 @@
         
         (cond 
             [(and (not(null? (cdr line))) (pair? (cadr line)))
-			(interpret-statement (cadr line))]
-            [(and (not(null? (cdr line))) (not(null? (cddr line))) (pair? (caddr line)))
-			(interpret-statement (caddr line))]
+               (interpret-statement (cadr line))]
+               
+            [(and (not(null? (cdr line))) 
+               (not(null? (cddr line))) (pair? (caddr line)))
+                    (interpret-statement (caddr line))]
+                    
             [else (interpret-next-line)]
         )
     ) 
@@ -143,10 +152,10 @@
         (let ((input (cond 
                             
                             [(eof-object? rawInput) (begin
-							(hash-set! *variable-table* 'eof 1)
-							(hash-ref *variable-table* 'nan))]
+                            (hash-set! *variable-table* 'eof 1)
+                            (hash-ref *variable-table* 'nan))]
                             [(not(number? rawInput))
-							(hash-ref *variable-table* 'nan)]
+                            (hash-ref *variable-table* 'nan)]
                             [else rawInput]
                     )
                 ))
@@ -167,8 +176,12 @@
 )
 
 (define (interpret-if arg) 
-    (let*((if-list (car arg))(relop (car if-list)) (expr1 (cadr if-list)) (expr2 (caddr if-list)))
-        (if ((hash-ref *function-table* relop) (evalexpr expr1) (evalexpr expr2))
+    (let*((if-list (car arg))(relop (car if-list))
+             (expr1 (cadr if-list)) (expr2 (caddr if-list)))
+             
+        (if ((hash-ref *function-table* relop) 
+                      (evalexpr expr1) (evalexpr expr2))
+                      
             (interpret-goto (cadr arg))
             '()
         )
@@ -180,7 +193,8 @@
     (let ((asub (car arg)))
         (if (eqv? (car asub) 'asub)
             (begin  
-                [let( (NewArr (make-vector (exact-round (evalexpr (caddr asub))) 0)))
+                [let( (NewArr (make-vector 
+                        (exact-round (evalexpr (caddr asub))) 0)))
                     (hash-set! *array-table* (cadr asub) NewArr)
                 ]
             )
@@ -193,7 +207,8 @@
 (define (interpret-let arg)
     (let ((asub (car arg))(expr (evalexpr (cadr arg))))
         (cond 
-            [(and (list?  asub) (eqv? (car asub) 'asub)) (set-array asub expr)]
+            [(and (list?  asub) (eqv? (car asub) 'asub))
+                (set-array asub expr)]
             [else (hash-set! *variable-table* (car arg) expr)]
         )
     )
@@ -221,13 +236,14 @@
     (let ((expr (cond 
                     [(symbol? expr*) (hash-ref *variable-table* expr*)]
                     [(and (list? expr*) (eqv? (car expr*) 'asub))
-					    (evalexpr (vector-ref (hash-ref *array-table* (cadr expr*)) 
-					    (exact-round (evalexpr(caddr expr*)))))]  
+                        (evalexpr (vector-ref 
+                            (hash-ref *array-table* (cadr expr*)) 
+                        (exact-round (evalexpr(caddr expr*)))))]  
                     [else expr*]
                 )
             ))
         (cond ((number? expr) (+ 0.0 expr))
-              (else (let ((fn (hash-ref *function-table* (car expr)))
+              (else (let ((fn (hash-ref *function-taSble* (car expr)))
                           (args (map evalexpr (cdr expr))))
                          (apply fn args))))
     )
@@ -237,7 +253,8 @@
 
 
 (define (set-array asub arg) 
-    (vector-set! (hash-ref *array-table* (cadr asub)) (exact-round (evalexpr (caddr asub))) (evalexpr arg))
+    (vector-set! (hash-ref *array-table* (cadr asub))
+        (exact-round (evalexpr (caddr asub))) (evalexpr arg))
 )
               
 
@@ -287,8 +304,7 @@
     (lambda (pair)
             (hash-set! *variable-table* (car pair) (cadr pair)))
     `(
-        ;(log10_2 0.301029995663981195213738894724493026768189881)
-        ;(sqrt_2  1.414213562373095048801688724209698078569671875)
+
         (e       ,(exp 1.0))
         (pi      ,(acos -1.0))
         (eof     0.0)
