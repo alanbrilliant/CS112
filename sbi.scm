@@ -61,8 +61,8 @@
         (let* ((sbprogfile (car arglist))
                (program (readlist-from-inputfile sbprogfile)))
               ;(write-program-by-line sbprogfile program) 
-			  (label-pass program) 
-			  (interpret-program program))))
+              (label-pass program) 
+              (interpret-program program))))
         
 
 (define *symbol-table* (make-hash))
@@ -108,14 +108,14 @@
         (let ((statement-return             
             
 
-                            (cond 
-                            [(equal? (car statement) 'goto) (interpret-goto (cadr statement))]
-                            [(equal? (car statement) 'dim) (interpret-dim (cdr statement))]
-                            [(equal? (car statement) 'input) (interpret-input (cdr statement))]
-                            [(equal? (car statement) 'let) (interpret-let (cdr  statement))]
-                            [(equal? (car statement) 'if) (interpret-if (cdr statement))]
-                            [(equal? (car statement) 'print) (interpret-print (cdr statement))]
-                            [else "not a recognized symbol"]
+             (cond 
+              [(equal? (car statement) 'goto) (interpret-goto (cadr statement))]
+              [(equal? (car statement) 'dim) (interpret-dim (cdr statement))]
+              [(equal? (car statement) 'input) (interpret-input (cdr statement))]
+              [(equal? (car statement) 'let) (interpret-let (cdr  statement))]
+              [(equal? (car statement) 'if) (interpret-if (cdr statement))]
+              [(equal? (car statement) 'print) (interpret-print (cdr statement))]
+              [else "not a recognized symbol"]
                             )
         ))
             
@@ -128,8 +128,10 @@
     (let ((line (car program)))
         
         (cond 
-            [(and (not(null? (cdr line))) (pair? (cadr line))) (interpret-statement (cadr line))]
-            [(and (not(null? (cdr line))) (not(null? (cddr line))) (pair? (caddr line))) (interpret-statement (caddr line))]
+            [(and (not(null? (cdr line))) (pair? (cadr line)))
+			(interpret-statement (cadr line))]
+            [(and (not(null? (cdr line))) (not(null? (cddr line))) (pair? (caddr line)))
+			(interpret-statement (caddr line))]
             [else (interpret-next-line)]
         )
     ) 
@@ -140,8 +142,11 @@
     (let ((rawInput (read *stdin*)) (var (car args)))
         (let ((input (cond 
                             
-                            [(eof-object? rawInput) (begin (hash-set! *variable-table* 'eof 1) (hash-ref *variable-table* 'nan))]
-                            [(not(number? rawInput)) (hash-ref *variable-table* 'nan)]
+                            [(eof-object? rawInput) (begin
+							(hash-set! *variable-table* 'eof 1)
+							(hash-ref *variable-table* 'nan))]
+                            [(not(number? rawInput))
+							(hash-ref *variable-table* 'nan)]
                             [else rawInput]
                     )
                 ))
@@ -215,7 +220,9 @@
 (define (evalexpr expr*)
     (let ((expr (cond 
                     [(symbol? expr*) (hash-ref *variable-table* expr*)]
-                    [(and (list? expr*) (eqv? (car expr*) 'asub)) (evalexpr (vector-ref (hash-ref *array-table* (cadr expr*)) (exact-round (evalexpr(caddr expr*)))))]  
+                    [(and (list? expr*) (eqv? (car expr*) 'asub))
+					    (evalexpr (vector-ref (hash-ref *array-table* (cadr expr*)) 
+					    (exact-round (evalexpr(caddr expr*)))))]  
                     [else expr*]
                 )
             ))
@@ -289,7 +296,7 @@
         
     ))
     
-(printf "terminal-port? *stdin* = ~s~n" (terminal-port? *stdin*))
+;(printf "terminal-port? *stdin* = ~s~n" (terminal-port? *stdin*))
 ;(if (terminal-port? *stdin*)
     (main (vector->list (current-command-line-arguments)))
     ;(printf "sbi.scm: interactive mode~n"))
