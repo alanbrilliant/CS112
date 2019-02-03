@@ -1,0 +1,31 @@
+head	1.1;
+access;
+symbols;
+locks;
+comment	@# @;
+
+
+1.1
+date	2019.01.18.19.49.38;	author -;	state -;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@-
+@
+text
+@(* $Id: interp.mli,v 1.2 2019-01-15 17:10:58-08 - - $ *)
+
+(*
+* Interpreter for Silly Basic
+*)
+
+val interpret_program : Absyn.program -> unit
+
+@

@@ -1,0 +1,315 @@
+head	1.9;
+access;
+symbols;
+locks;
+comment	@# @;
+
+
+1.9
+date	2019.01.24.21.15.38;	author -;	state -;
+branches;
+next	1.8;
+
+1.8
+date	2019.01.23.23.56.22;	author -;	state -;
+branches;
+next	1.7;
+
+1.7
+date	2019.01.23.23.50.19;	author -;	state -;
+branches;
+next	1.6;
+
+1.6
+date	2019.01.23.23.43.54;	author -;	state -;
+branches;
+next	1.5;
+
+1.5
+date	2019.01.23.23.42.11;	author -;	state -;
+branches;
+next	1.4;
+
+1.4
+date	2019.01.23.23.35.56;	author -;	state -;
+branches;
+next	1.3;
+
+1.3
+date	2019.01.23.23.35.32;	author -;	state -;
+branches;
+next	1.2;
+
+1.2
+date	2019.01.23.23.31.31;	author -;	state -;
+branches;
+next	1.1;
+
+1.1
+date	2019.01.18.19.49.38;	author -;	state -;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.9
+log
+@-
+@
+text
+@(* $Id: absyn.mli,v 1.8 2019-01-23 15:56:22-08 - - $ *)
+
+(*
+* Abstract syntax definitions for SB.
+*)
+
+type linenr    = int
+type ident     = string
+type label     = string
+type number    = float
+type oper      = string
+
+and  printable = Printexpr of expr
+               | String of string
+
+and  memref    = Arrayref of ident * expr
+               | Variable of ident
+
+and  expr      = Number of number
+               | Memref of memref
+               | Unary of oper * expr
+               | Binary of oper * expr * expr
+
+type stmt      = Dim of ident * expr
+               | Let of memref * expr
+               | Goto of label
+               | If of expr * label
+               | Print of printable list
+               | Input of memref list
+
+type progline  = linenr * label option * stmt option
+
+type program   = progline list
+
+@
+
+
+1.8
+log
+@-
+@
+text
+@d1 1
+a1 1
+(* $Id: absyn.mli,v 1.7 2019-01-23 15:50:19-08 - - $ *)
+d19 1
+a19 2
+and  expr      = Binop of oper * expr * expr
+               | Unop of oper * expr
+d21 2
+a22 2
+               | Number of number
+               | Fncall of ident * expr
+@
+
+
+1.7
+log
+@-
+@
+text
+@d1 1
+a1 1
+(* $Id: absyn.mli,v 1.6 2019-01-23 15:43:54-08 - - $ *)
+d7 24
+a30 24
+type linenr   = int
+type ident    = string
+type label    = string
+type number   = float
+type oper     = string
+
+and  print    = Printexpr of expr
+              | String of string
+
+and  memref   = Arrayref of ident * expr
+              | Variable of ident
+
+and  expr     = Binop of oper * expr * expr
+              | Unop of oper * expr
+              | Memref of memref
+              | Number of number
+              | Fncall of ident * expr
+
+type stmt     = Dim of ident * expr
+              | Let of memref * expr
+              | Goto of label
+              | If of expr * label
+              | Print of print list
+              | Input of memref list
+d32 1
+a32 1
+type progline = linenr * label option * stmt option
+d34 1
+a34 1
+type program  = progline list
+@
+
+
+1.6
+log
+@-
+@
+text
+@d1 1
+a1 1
+(* $Id: absyn.mli,v 1.4 2019-01-23 15:35:56-08 - - $ *)
+d7 24
+a30 28
+type linenr     = int
+type identifier = string
+type label      = string
+type number     = float
+type oper       = string
+
+type arrayref   = identifier * expr
+
+and  fncall     = identifier * expr
+
+and  print      = Printexpr of expr
+                | String of string
+
+and  memref     = Arrayref of arrayref
+                | Variable of identifier
+
+and  expr       = Binop of oper * expr * expr
+                | Unop of oper * expr
+                | Memref of memref
+                | Number of number
+                | Fncall of fncall
+
+type stmt       = Dim of arrayref
+                | Let of memref * expr
+                | Goto of label
+                | If of expr * label
+                | Print of print list
+                | Input of memref list
+d32 1
+a32 1
+type progline   = linenr * label option * stmt option
+d34 1
+a34 1
+type program    = progline list
+@
+
+
+1.5
+log
+@-
+@
+text
+@d13 4
+d20 1
+a20 1
+and  memref     = Arrayref of identifier * expr
+d27 1
+a27 1
+                | Fncall of identifier * expr
+d29 1
+a29 1
+type stmt       = Dim of identifier * expr
+@
+
+
+1.4
+log
+@-
+@
+text
+@d1 1
+a1 1
+(* $Id: absyn.mli,v 1.3 2019-01-23 15:35:32-08 - - $ *)
+a12 4
+type arrayref   = identifier * expr
+
+and  fncall     = identifier * expr
+
+d16 1
+a16 1
+and  memref     = Arrayref of arrayref
+d23 1
+a23 1
+                | Fncall of fncall
+d25 1
+a25 1
+type stmt       = Dim of arrayref
+@
+
+
+1.3
+log
+@-
+@
+text
+@d1 1
+a1 1
+(* $Id: absyn.mli,v 1.1 2019-01-18 11:49:38-08 - - $ *)
+d8 1
+a8 1
+type variable   = string
+d13 1
+a13 1
+type arrayref   = variable * expr
+d15 1
+a15 1
+and  fncall     = variable * expr
+d21 1
+a21 1
+                | Variable of variable
+@
+
+
+1.2
+log
+@-
+@
+text
+@d8 1
+a8 1
+type identifier = string
+d13 1
+a13 1
+type arrayref   = identifier * expr
+d15 1
+a15 1
+and  fncall     = identifier * expr
+d21 1
+a21 1
+                | Variable of identifier
+@
+
+
+1.1
+log
+@-
+@
+text
+@d1 1
+a1 1
+(* $Id: absyn.mli,v 1.2 2019-01-15 18:03:24-08 - - $ *)
+d8 1
+a8 1
+type variable   = string
+d13 1
+a13 1
+type arrayref   = variable * expr
+d15 1
+a15 1
+and  fncall     = variable * expr
+d21 1
+a21 1
+                | Variable of variable
+@

@@ -1,0 +1,22 @@
+# Generated file: DO NOT EDIT
+# ocamldep absyn.mli etc.mli etc.ml tables.mli tables.ml interp.mli \
+# interp.ml main.ml tables.mli parser.mli parser.ml scanner.ml
+# Generated Thu Jan 24 18:32:49 PST 2019
+absyn.cmi :
+etc.cmi :
+etc.cmo : etc.cmi
+etc.cmx : etc.cmi
+tables.cmi : absyn.cmi
+tables.cmo : absyn.cmi tables.cmi
+tables.cmx : absyn.cmi tables.cmi
+interp.cmi : absyn.cmi
+interp.cmo : tables.cmi etc.cmi absyn.cmi interp.cmi
+interp.cmx : tables.cmx etc.cmx absyn.cmi interp.cmi
+main.cmo : scanner.cmo parser.cmi interp.cmi etc.cmi
+main.cmx : scanner.cmx parser.cmx interp.cmx etc.cmx
+tables.cmi : absyn.cmi
+parser.cmi : absyn.cmi
+parser.cmo : etc.cmi absyn.cmi parser.cmi
+parser.cmx : etc.cmx absyn.cmi parser.cmi
+scanner.cmo : parser.cmi etc.cmi
+scanner.cmx : parser.cmx etc.cmx
