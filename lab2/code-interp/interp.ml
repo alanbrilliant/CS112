@@ -13,11 +13,15 @@ let interp_memref_var var  =
 let rec eval_expr (expr : Absyn.expr) : float = match expr with
     | Number number -> number
     | Memref memref -> (match memref with 
-		|Absyn.Arrayref (v,e) -> unimpl "no arrays yet sorry"(*interp_memref_arr memref  *)
+		|Absyn.Arrayref (v,e) -> interp_memref_arr v e
 		|Absyn.Variable varian -> interp_memref_var varian)
     | Unary (oper, expr) -> (Hashtbl.find Tables.unary_fn_table oper) (eval_expr expr) 
     | Binary (oper, expr1, expr2) -> (Hashtbl.find Tables.binary_fn_table oper) (eval_expr expr1) (eval_expr expr2)
 
+let interp_memref_arr (v : Absyn.ident) (e : Absyn.expr) = 
+	Array.get (Hashtbl.find Tables.array_table v) eval_expr(e)
+		
+	
 let interp_print (print_list : Absyn.printable list) =
     let print_item item =
         (print_string " ";
@@ -38,11 +42,12 @@ let interp_input (memref_list : Absyn.memref list) =
     in List.iter input_number; () 
 
 let interp_let (memref : Absyn.memref) (expr : Absyn.expr) =( match memref with 
-	|Absyn.Arrayref (var, expr) -> ()
+	|Absyn.Arrayref (v,e) -> Array.set (Hashtbl.find Tables.array_table v) e expr
 	|Absyn.Variable var -> Hashtbl.add Tables.variable_table var (eval_expr expr))
 	
 	
-	
+let interp_dim (ident : Absyn.ident) (expr : Absyn.expr) = 
+	Hashtbl.add Tables.array_table ident (Array.make (eval_expr expr) 0)
 	
 	
 	
