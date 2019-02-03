@@ -7,14 +7,14 @@ let unimpl reason = raise (Unimplemented reason)
 
 let want_dump = ref false
 
-let interp_memref_var memref = 
-	Hashtbl.find Tables.variable_table memref
+let interp_memref_var var  = 
+	Hashtbl.find Tables.variable_table var
  
 let rec eval_expr (expr : Absyn.expr) : float = match expr with
     | Number number -> number
-    | Memref memref -> match memref with 
+    | Memref memref -> (match memref with 
 		|Absyn.Arrayref (v,e) -> unimpl "no arrays yet sorry"(*interp_memref_arr memref  *)
-		|Absyn.Variable varian -> eval_expr (interp_memref_var memref)
+		|Absyn.Variable varian -> interp_memref_var varian)
     | Unary (oper, expr) -> (Hashtbl.find Tables.unary_fn_table oper) (eval_expr expr) 
     | Binary (oper, expr1, expr2) -> (Hashtbl.find Tables.binary_fn_table oper) (eval_expr expr1) (eval_expr expr2)
 
@@ -35,11 +35,11 @@ let interp_input (memref_list : Absyn.memref list) =
              in (print_float number; print_newline ())
         with End_of_file -> 
              (print_string "End_of_file"; print_newline ())
-    in List.iter input_number 
+    in List.iter input_number; () 
 
-let interp_let (memref : Absyn.memref) = match memref with 
-	|Absyn.Arrayref (var, expr) ->unimpl "no arrays yet"
-	|Absyn.Variable var -> Hashtbl.add Tables.variable_table memref expr
+let interp_let (memref : Absyn.memref) (expr : Absyn.expr) =( match memref with 
+	|Absyn.Arrayref (var, expr) -> ()
+	|Absyn.Variable var -> Hashtbl.add Tables.variable_table var (eval_expr expr))
 	
 	
 	
