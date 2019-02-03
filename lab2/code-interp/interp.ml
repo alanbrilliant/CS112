@@ -10,8 +10,8 @@ let want_dump = ref false
 let rec eval_expr (expr : Absyn.expr) : float = match expr with
     | Number number -> number
     | Memref memref -> unimpl "eval_expr Memref"
-    | Unary (oper, expr) -> unimpl "eval_expr Unary"
-    | Binary (oper, expr1, expr2) -> unimpl "eval_expr Binary"
+    | Unary (oper, expr) -> (Hashtbl.find Tables.unary_fn_table) (eval_expr expr) 
+    | Binary (oper, expr1, expr2) -> (Hashtbl.find Tables.binary_fn_table) (eval_expr expr1) (eval_expr expr2)
 
 let interp_print (print_list : Absyn.printable list) =
     let print_item item =
