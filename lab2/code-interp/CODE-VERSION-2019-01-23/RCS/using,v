@@ -1,0 +1,57 @@
+head	1.2;
+access;
+symbols;
+locks;
+comment	@# @;
+
+
+1.2
+date	2019.01.25.02.32.49;	author -;	state -;
+branches;
+next	1.1;
+
+1.1
+date	2019.01.18.19.49.38;	author -;	state -;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@-
+@
+text
+@(* $Id: using,v 1.1 2019-01-18 11:49:38-08 - - $ *)
+
+#load "str.cma";;
+
+#mod_use "absyn.mli";;
+#mod_use "etc.ml";;
+
+#mod_use "parser.ml";;
+#mod_use "scanner.ml";;
+
+#mod_use "tables.ml";;
+#mod_use "interp.ml";;
+#mod_use "main.ml";;
+
+open Interp;;
+open Main;;
+
+@
+
+
+1.1
+log
+@-
+@
+text
+@d1 1
+a1 1
+(* $Id: using,v 1.2 2019-01-17 18:03:28-08 - - $ *)
+d14 3
+@

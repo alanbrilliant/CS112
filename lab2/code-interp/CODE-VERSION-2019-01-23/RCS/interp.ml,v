@@ -1,0 +1,189 @@
+head	1.6;
+access;
+symbols;
+locks;
+comment	@; @;
+
+
+1.6
+date	2019.01.24.21.15.38;	author -;	state -;
+branches;
+next	1.5;
+
+1.5
+date	2019.01.23.23.57.22;	author -;	state -;
+branches;
+next	1.4;
+
+1.4
+date	2019.01.23.23.54.46;	author -;	state -;
+branches;
+next	1.3;
+
+1.3
+date	2019.01.23.23.50.19;	author -;	state -;
+branches;
+next	1.2;
+
+1.2
+date	2019.01.23.22.40.38;	author -;	state -;
+branches;
+next	1.1;
+
+1.1
+date	2019.01.18.19.49.38;	author -;	state -;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.6
+log
+@-
+@
+text
+@(* $Id: interp.ml,v 1.5 2019-01-23 15:57:22-08 - - $ *)
+
+exception Unimplemented of string
+let unimpl reason = raise (Unimplemented reason)
+
+let rec eval_expr (expr : Absyn.expr) : float = match expr with
+    | Absyn.Number number -> number
+    | Absyn.Memref memref -> unimpl "eval_expr Memref"
+    | Absyn.Unary (oper, expr) -> unimpl "eval_expr Unary"
+    | Absyn.Binary (oper, expr1, expr2) -> unimpl "eval_expr Binary"
+
+let interp_print (print_list : Absyn.printable list) =
+    let print_item item =
+        (print_char ' ';
+         match item with
+         | Absyn.String string ->
+           let regex = Str.regexp "\"\\(.*\\)\""
+           in print_string (Str.replace_first regex "\\1" string)
+         | Absyn.Printexpr expr ->
+           print_float (eval_expr expr))
+    in (List.iter print_item print_list; print_newline ())
+
+let interp_input (memref_list : Absyn.memref list) =
+    let input_number (memref : Absyn.memref) =
+        try  let number = Etc.read_number ()
+             in (print_float number; print_newline ())
+        with End_of_file -> 
+             (print_string "End_of_file"; print_newline ())
+    in List.iter input_number memref_list
+
+let interp_stmt (stmt : Absyn.stmt) = match stmt with
+    | Absyn.Dim (ident, expr) -> unimpl "Dim (ident, expr)"
+    | Absyn.Let (memref, expr) -> unimpl "Let (memref, expr)"
+    | Absyn.Goto labsl -> unimpl "Goto labsl"
+    | Absyn.If (expr, label) -> unimpl "If (expr, label)"
+    | Absyn.Print print_list -> interp_print print_list
+    | Absyn.Input memref_list -> interp_input memref_list
+
+let rec interpret (program : Absyn.program) = match program with
+    | [] -> ()
+    | firstline::otherlines -> match firstline with
+      | _, _, None -> interpret otherlines
+      | _, _, Some stmt -> (interp_stmt stmt; interpret otherlines)
+
+let interpret_program program =
+    (Tables.init_label_table program; 
+     interpret program)
+
+@
+
+
+1.5
+log
+@-
+@
+text
+@d1 1
+a1 1
+(* $Id: interp.ml,v 1.4 2019-01-23 15:54:46-08 - - $ *)
+d4 1
+a4 1
+let incomplete reason = raise (Unimplemented reason)
+a6 3
+    | Absyn.Binop (oper, expr1, expr2) -> incomplete "eval_expr Binop"
+    | Absyn.Unop (oper, expr) -> incomplete "eval_expr Unop"
+    | Absyn.Memref memref -> incomplete "eval_expr Memref"
+d8 3
+a10 1
+    | Absyn.Fncall (ident, expr) -> incomplete "eval_expr Fncall"
+d32 4
+a35 4
+    | Absyn.Dim (ident, expr) -> incomplete "Dim (ident, expr)"
+    | Absyn.Let (memref, expr) -> incomplete "Let (memref, expr)"
+    | Absyn.Goto labsl -> incomplete "Goto labsl"
+    | Absyn.If (expr, label) -> incomplete "If (expr, label)"
+@
+
+
+1.4
+log
+@-
+@
+text
+@d1 1
+a1 1
+(* $Id: interp.ml,v 1.3 2019-01-23 15:50:19-08 - - $ *)
+d13 1
+a13 1
+let interp_print (print_list : Absyn.print list) =
+@
+
+
+1.3
+log
+@-
+@
+text
+@d1 1
+a1 1
+(* $Id: interp.ml,v 1.2 2019-01-23 14:40:38-08 - - $ *)
+d4 1
+a4 1
+let unimplemented reason = raise (Unimplemented reason)
+d7 3
+d11 1
+a11 1
+    | _ -> unimplemented "eval_expr"
+d33 4
+a36 4
+    | Absyn.Dim (ident, expr) -> unimplemented "Dim (ident, expr)"
+    | Absyn.Let (memref, expr) -> unimplemented "Let (memref, expr)"
+    | Absyn.Goto labsl -> unimplemented "Goto labsl"
+    | Absyn.If (expr, label) -> unimplemented "If (expr, label)"
+@
+
+
+1.2
+log
+@-
+@
+text
+@d1 1
+a1 1
+(* $Id: interp.ml,v 1.1 2019-01-18 11:49:38-08 - - $ *)
+d30 1
+a30 1
+    | Absyn.Dim array -> unimplemented "Dim array"
+@
+
+
+1.1
+log
+@-
+@
+text
+@d1 1
+a1 1
+(* $Id: interp.ml,v 1.8 2019-01-17 15:28:42-08 - - $ *)
+d6 1
+a6 1
+let rec eval_expr (expr : Absyn.expr) = match expr with
+@
