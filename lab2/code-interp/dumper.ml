@@ -45,9 +45,6 @@ and string_of_expr expr = match expr with
     | Absyn.Binary (oper, expr1, expr2) ->
           string_of_ctor "Binary"
               [quote oper; string_of_expr expr1; string_of_expr expr2]
-    | Absyn.Relop (oper, expr1, expr2) ->
-          string_of_ctor "Relop"
-               [quote oper; string_of_expr expr1; string_of_expr expr2]
 
 
 let string_of_stmt (stmt: Absyn.stmt) = match stmt with

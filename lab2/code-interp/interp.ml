@@ -25,12 +25,6 @@ let rec eval_expr (expr : Absyn.expr) : float = match expr with
 	                  if relop_result = true
 					  then 1.
 					  else 0.
-    (*| Relop (oper, expr1, expr2) -> print_string oper; let relop_result = (Hashtbl.find Tables.relop_table oper) (eval_expr expr1) (eval_expr expr2) in
-	                  if relop_result = true
-					  then 1.
-					  else 0.
-	
-*)
 
 			
 let interp_print (print_list : Absyn.printable list) =
@@ -44,10 +38,13 @@ let interp_print (print_list : Absyn.printable list) =
            print_float (eval_expr expr))
     in (List.iter print_item print_list; print_newline ()); None
 
-let interp_input (memref_list : Absyn.memref list) =
+let rec interp_input (memref_list : Absyn.memref list) =
     let input_number memref =
-        try  let number = Etc.read_number ()
-             in (print_float number; print_newline ())
+        try let number = Etc.read_number ()
+			match memref_list with
+			| [] -> None
+			| first::other -> interp_let first number; interp_input other
+            (* in (print_float number; print_newline ())*)
         with End_of_file -> 
              (print_string "End_of_file"; print_newline ())
     in List.iter input_number; None 
