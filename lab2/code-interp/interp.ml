@@ -21,6 +21,10 @@ let rec eval_expr (expr : Absyn.expr) : float = match expr with
 		|Absyn.Variable varian -> interp_memref_var varian)
     | Unary (oper, expr) -> (Hashtbl.find Tables.unary_fn_table oper) (eval_expr expr) 
     | Binary (oper, expr1, expr2) -> (Hashtbl.find Tables.binary_fn_table oper) (eval_expr expr1) (eval_expr expr2)
+	| Relop (oper, expr1, expr2) -> let relop_result = (Hashtbl.find Tables.relop_table oper) (eval_expr expr1) (eval_expr expr2) in
+	                  if relop_result = true
+					  then 1.
+					  else 0.
 	
 
 
@@ -56,11 +60,10 @@ let interp_goto label : Absyn.program option =
 		Some (Hashtbl.find Tables.label_table label)
 	
 let interp_if (expr : Absyn.expr) label : Absyn.program option =
-	match expr = 
-		| Relop (oper, expr1, expr2) -> let relop_return = (Hashtbl.find Tables.relop_fn_table oper) (eval_expr expr1) (eval_expr expr2)in
-													if relop_return = true
-													then interp_goto label
-													else None
+	 let relop_return = (eval_expr expr) in
+											if relop_return = 1.
+											then interp_goto label
+											else None
 	
 let interp_stmt (stmt : Absyn.stmt) : (Absyn.program option) = match stmt with
     | Dim (ident, expr) ->  interp_dim ident expr
