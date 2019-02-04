@@ -5,6 +5,17 @@ type array_table_t = (string, float array) Hashtbl.t
 type unary_fn_table_t = (string, float -> float) Hashtbl.t
 type binary_fn_table_t = (string, float -> float -> float) Hashtbl.t
 type label_table_t = (string, Absyn.program) Hashtbl.t
+type relop_table_t = (string, float -> float -> bool) Hashtbl.t
+
+let relop_table : relop_table_t = Hashtbl.create 16
+let _ = List.iter (fun (label, value) ->
+                  Hashtbl.add relop_table label value)
+                 [">"  , >;
+                  "<", <;
+                  "=" , =;
+				  ">=", >=;
+				  "<=", <=;
+                  "<>", <>]
 
 let variable_table : variable_table_t = Hashtbl.create 16
 let _ = List.iter (fun (label, value) ->

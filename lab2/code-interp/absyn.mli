@@ -20,6 +20,7 @@ and  expr      = Number of number
                | Memref of memref
                | Unary of oper * expr
                | Binary of oper * expr * expr
+			   | Relop of oper * expr * expr
 
 type stmt      = Dim of ident * expr
                | Let of memref * expr
