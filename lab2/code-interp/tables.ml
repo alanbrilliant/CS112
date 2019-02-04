@@ -10,12 +10,12 @@ type relop_table_t = (string, float -> float -> bool) Hashtbl.t
 let relop_table : relop_table_t = Hashtbl.create 16
 let _ = List.iter (fun (label, value) ->
                   Hashtbl.add relop_table label value)
-                 [">"  , >;
-                  "<", <;
-                  "=" , =;
-				  ">=", >=;
-				  "<=", <=;
-                  "<>", <>]
+                 [">"  ,(>);
+                  "<", (<);
+                  "=" , (=);
+		  ">=", (>=);
+		  "<=", (<=);
+                  "<>", (<>)]
 
 let variable_table : variable_table_t = Hashtbl.create 16
 let _ = List.iter (fun (label, value) ->
@@ -57,6 +57,7 @@ let _ = List.iter (fun (label, value) ->
                   "/", (/.);
                   "%", mod_float;
                   "^", ( ** )]
+
 
 
 let label_table : label_table_t = Hashtbl.create 16

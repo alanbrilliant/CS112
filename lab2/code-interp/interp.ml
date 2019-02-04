@@ -20,13 +20,17 @@ let rec eval_expr (expr : Absyn.expr) : float = match expr with
 		|Absyn.Arrayref (v,e) -> interp_memref_arr v (eval_expr e)
 		|Absyn.Variable varian -> interp_memref_var varian)
     | Unary (oper, expr) -> (Hashtbl.find Tables.unary_fn_table oper) (eval_expr expr) 
-    | Binary (oper, expr1, expr2) -> (Hashtbl.find Tables.binary_fn_table oper) (eval_expr expr1) (eval_expr expr2)
-	| Relop (oper, expr1, expr2) -> let relop_result = (Hashtbl.find Tables.relop_table oper) (eval_expr expr1) (eval_expr expr2) in
+    | Binary (oper, expr1, expr2) -> try (Hashtbl.find Tables.binary_fn_table oper) (eval_expr expr1) (eval_expr expr2)  
+                                     with Not_found ->   let relop_result = (Hashtbl.find Tables.relop_table oper) (eval_expr expr1) (eval_expr expr2) in
+	                  if relop_result = true
+					  then 1.
+					  else 0.
+    (*| Relop (oper, expr1, expr2) -> print_string oper; let relop_result = (Hashtbl.find Tables.relop_table oper) (eval_expr expr1) (eval_expr expr2) in
 	                  if relop_result = true
 					  then 1.
 					  else 0.
 	
-
+*)
 
 			
 let interp_print (print_list : Absyn.printable list) =
@@ -69,7 +73,7 @@ let interp_stmt (stmt : Absyn.stmt) : (Absyn.program option) = match stmt with
     | Dim (ident, expr) ->  interp_dim ident expr
     | Let (memref, expr) -> interp_let memref expr
     | Goto label -> interp_goto label
-    | If (expr, label) -> unimpl "If (expr, label)"
+    | If (expr, label) -> interp_if expr label
     | Print print_list -> interp_print print_list
     | Input memref_list -> interp_input memref_list
 
