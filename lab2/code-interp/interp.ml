@@ -38,21 +38,28 @@ let interp_print (print_list : Absyn.printable list) =
            print_float (eval_expr expr))
     in (List.iter print_item print_list; print_newline ()); None
 
-let rec interp_input (memref_list : Absyn.memref list) =
-    let input_number memref =
-        try let number = Etc.read_number ()
-			match memref_list with
-			| [] -> None
-			| first::other -> interp_let first number; interp_input other
-            (* in (print_float number; print_newline ())*)
-        with End_of_file -> 
-             (print_string "End_of_file"; print_newline ())
-    in List.iter input_number; None 
 
 let interp_let (memref : Absyn.memref) (expr : Absyn.expr) =( match memref with 
 	|Absyn.Arrayref (v,e) -> Array.set (Hashtbl.find Tables.array_table v)(int_of_float (eval_expr e)) (eval_expr expr)
 	|Absyn.Variable var -> Hashtbl.add Tables.variable_table var (eval_expr expr)); None
 	
+
+let rec interp_input (memref_list : Absyn.memref list) =
+   (* let input_number memref =*)
+        try let number = Etc.read_number () in
+			match memref_list with
+
+			| first::other -> (match first with	
+                                           |Absyn.Arrayref (v,e) -> Array.set (Hashtbl.find Tables.array_table v)(int_of_float (eval_expr e)) (number)
+	                                   |Absyn.Variable var -> Hashtbl.add Tables.variable_table var number);
+                                           interp_input other
+
+			| [] ->None
+
+        with End_of_file -> 
+             (print_string "End_of_file"; print_newline ();None)
+    (*in List.iter input_number; None *)
+
 	
 let interp_dim (ident : Absyn.ident) (expr : Absyn.expr ) = 
 	Hashtbl.add Tables.array_table ident (Array.make (int_of_float (eval_expr expr)) 0.); None
