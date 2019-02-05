@@ -13,8 +13,8 @@ let _ = List.iter (fun (label, value) ->
                  [">"  ,(>);
                   "<", (<);
                   "=" , (=);
-		  ">=", (>=);
-		  "<=", (<=);
+          ">=", (>=);
+          "<=", (<=);
                   "<>", (<>)]
 
 let variable_table : variable_table_t = Hashtbl.create 16
