@@ -46,18 +46,19 @@ let interp_let (memref : Absyn.memref) (expr : Absyn.expr) =( match memref with
 
 let rec interp_input (memref_list : Absyn.memref list) =
    (* let input_number memref =*)
-        try let number = Etc.read_number () in
-			match memref_list with
+        
+		match memref_list with
 
-			| first::other -> (match first with	
-                                           |Absyn.Arrayref (v,e) -> Array.set (Hashtbl.find Tables.array_table v)(int_of_float (eval_expr e)) (number)
-	                                   |Absyn.Variable var -> Hashtbl.add Tables.variable_table var number);
-                                           interp_input other
+		| first::other -> try let number = Etc.read_number () in
+		                   (match first with	
+						    |Absyn.Arrayref (v,e) -> Array.set (Hashtbl.find Tables.array_table v)(int_of_float (eval_expr e)) (number)
+							|Absyn.Variable var -> Hashtbl.add Tables.variable_table var number);
+						   (interp_input other)
+						  with End_of_file -> (Hashtbl.add Tables.variable_table "eof" 1.;None)
+		| [] ->None
 
-			| [] ->None
-
-        with End_of_file -> 
-             (print_string "End_of_file"; print_newline ();None)
+        
+             
     (*in List.iter input_number; None *)
 
 	
