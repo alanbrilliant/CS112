@@ -48,14 +48,14 @@ let rec interp_input (memref_list : Absyn.memref list) =
    (* let input_number memref =*)
         
 		match memref_list with
-
+		| [] ->None
 		| first::other -> try let number = Etc.read_number () in
-		                   (match first with	
+		                   ((match first with	
 						    |Absyn.Arrayref (v,e) -> Array.set (Hashtbl.find Tables.array_table v)(int_of_float (eval_expr e)) (number)
 							|Absyn.Variable var -> Hashtbl.add Tables.variable_table var number);
-						   (interp_input other)
-						  with End_of_file -> (Hashtbl.add Tables.variable_table "eof" 1.;None)
-		| [] ->None
+						   (interp_input other))
+			           with End_of_file -> ( Hashtbl.add Tables.variable_table "eof" 1.;None)
+
 
         
              
